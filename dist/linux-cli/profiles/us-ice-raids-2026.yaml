@@ -1,0 +1,142 @@
+name: "US ICE Raids 2026"
+description: "High-risk ICE operations, mass deportation enforcement, urban protests"
+version: "1.0"
+last_updated: "2026-01-25"
+regions: ["US"]
+contexts: ["ice_raids", "urban_protests", "mass_deportations"]
+
+capabilities:
+  - id: "facial_recognition_deployed"
+    name: "Facial Recognition & License Plate Readers"
+    severity: "high"
+    description: "Flock Safety cameras, DHS facial recognition, drone surveillance active in protest zones"
+    sources:
+      - title: "Flock Safety Camera Networks Expand"
+        url: "https://www.eff.org/deeplinks/2023/10/flock-safety-threatens-expand-dangerous-reach-license-plate-readers"
+        author: "EFF"
+        date: "2023-10-15"
+    mitigations:
+      - id: "face_obscuring"
+        action: "avoid_masks_illegal_check_local"
+        description: "Check local mask-ban laws; wear glasses/hat/non-reflective materials where legal"
+        difficulty: "trivial"
+        effectiveness: "medium"
+      - id: "pre_event_camera_mapping"
+        action: "download_flock_map"
+        description: "Identify Flock camera locations before attending; plan routes avoiding cameras"
+        difficulty: "easy"
+        effectiveness: "high"
+      - id: "legal_know_rights"
+        action: "memorize_legal_contact"
+        description: "Memorize lawyer/bail-fund number; do not unlock device if arrested"
+        difficulty: "trivial"
+        effectiveness: "high"
+
+  - id: "geofence_warrants"
+    name: "Geofence Warrants"
+    severity: "high"
+    description: "Google Timeline / Apple Location History warrants for bulk protest area data"
+    sources:
+      - title: "ACLU on Geofence Warrants"
+        url: "https://www.aclu.org/news/privacy-technology/geofence-warrants-threaten-civil-liberties"
+        author: "ACLU"
+        date: "2025-06-01"
+    mitigations:
+      - id: "disable_location_services"
+        action: "disable_location"
+        description: "Turn off location services on phone before leaving home"
+        difficulty: "trivial"
+        effectiveness: "high"
+        os: ["android", "ios"]
+      - id: "no_google_maps"
+        action: "use_offline_maps"
+        description: "Download maps offline (Maps.me, Organic Maps); avoid Google Maps near event"
+        difficulty: "easy"
+        effectiveness: "high"
+
+  - id: "device_seizure_risk"
+    name: "Device Seizure at Arrest"
+    severity: "high"
+    description: "Phones seized and forensically accessed; unlocked devices reveal chats, locations, contacts"
+    sources:
+      - title: "FBI Mobile Device Hacking Capabilities"
+        url: "https://www.aclu.org/issues/privacy-technology/surveillance-technologies/cell-phone-location-tracking"
+        author: "ACLU"
+        date: "2025-09-15"
+    mitigations:
+      - id: "strong_passcode"
+        action: "set_strong_passcode_6plus"
+        description: "Set 6+ digit PIN passcode (not biometric); do NOT unlock on arrest"
+        difficulty: "trivial"
+        effectiveness: "high"
+        os: ["android", "ios"]
+      - id: "disable_biometrics"
+        action: "disable_face_fingerprint"
+        description: "Turn off Face ID / fingerprint; use passcode only (harder to force)"
+        difficulty: "trivial"
+        effectiveness: "high"
+        os: ["android", "ios"]
+      - id: "leave_phone_home"
+        action: "faraday_or_home"
+        description: "Leave phone at home or in a Faraday bag; attend event without tracking device"
+        difficulty: "easy"
+        effectiveness: "critical"
+
+countermeasures:
+  browser_profile:
+    name: "Firefox Hardened Profile"
+    description: "Create separate Firefox profile with privacy-focused defaults"
+    settings:
+      - "privacy.trackingprotection.enabled=true"
+      - "privacy.trackingprotection.socialtracking.enabled=true"
+      - "network.cookie.cookieBehavior=1"
+      - "dom.disable_beforeunload=true"
+    extensions:
+      - name: "uBlock Origin"
+        description: "Block ads, trackers, malware"
+        url: "https://addons.mozilla.org/firefox/addon/ublock-origin/"
+      - name: "HTTPS Everywhere"
+        description: "Force HTTPS on all sites"
+        url: "https://addons.mozilla.org/firefox/addon/https-everywhere/"
+    notes: "Use separate profile from daily browsing; clear on exit"
+
+  os_hardening_linux:
+    name: "Linux Hardening (UFW, Services)"
+    checks:
+      - check: "encryption_enabled"
+        command: "dmsetup table --showkeys"
+        description: "Verify full-disk encryption (LUKS) enabled"
+      - check: "ufw_active"
+        command: "ufw status"
+        description: "Enable strict UFW firewall rules"
+    ufw_rules:
+      - "sudo ufw default deny incoming"
+      - "sudo ufw default allow outgoing"
+      - "sudo ufw enable"
+    notes: "Protects home network; blocks uninvited connections"
+
+  network_config:
+    name: "Network / VPN / Tor Guidance"
+    tor_setup:
+      - description: "Use Tor Browser for coordination and research"
+        download: "https://www.torproject.org"
+        difficulty: "easy"
+        effectiveness: "high"
+    circumvention:
+      - name: "Psiphon"
+        description: "VPN + anti-censorship in one; user-friendly"
+        url: "https://psiphon.ca"
+    notes: "Avoid free VPNs; use trusted providers (Mullvad, IVPN). Test before event."
+
+legal_notes: |
+  - Do NOT unlock your device if arrested; invoke right to remain silent.
+  - Memorize a lawyer's phone number; call immediately upon arrest.
+  - Know your rights: EFF & ACLU have pocket guides.
+  - Understand local laws on masks, protests, civil disobedience.
+  - Data on your phone can be used against you; minimize what you carry.
+
+sources:
+  - "https://www.aclu.org/"
+  - "https://www.eff.org/"
+
+tags: ["us", "2026", "ice", "protests", "federal"]

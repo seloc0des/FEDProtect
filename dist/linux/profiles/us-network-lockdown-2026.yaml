@@ -1,0 +1,257 @@
+name: "US Network Lockdown (2026)"
+description: "Profile for scenarios with network restrictions, internet shutdowns, or heavy surveillance of communications"
+version: "1.0"
+last_updated: "2026-01-25"
+regions: ["US"]
+contexts: ["network_blackout", "internet_shutdown", "communications_monitoring"]
+
+capabilities:
+  - id: "internet_shutdown"
+    name: "Internet Shutdown / Throttling"
+    severity: "high"
+    description: "Government-ordered internet shutdowns or severe throttling during civil unrest"
+    sources:
+      - title: "Access Now Shutdown Tracker"
+        url: "https://www.accessnow.org/keepiton/"
+        author: "Access Now"
+        date: "2025-12-01"
+      - title: "EFF on Internet Shutdowns"
+        url: "https://www.eff.org/issues/internet-shutdowns"
+        author: "EFF"
+        date: "2025-06-15"
+    mitigations:
+      - id: "mesh_networking"
+        action: "install_mesh_apps"
+        description: "Install mesh networking apps (Briar, Bridgefy) before event; works without internet"
+        difficulty: "easy"
+        effectiveness: "high"
+        resource: "https://briarproject.org/"
+      - id: "offline_maps"
+        action: "download_offline_maps"
+        description: "Download offline maps of protest area; Organic Maps or Maps.me"
+        difficulty: "trivial"
+        effectiveness: "high"
+      - id: "pre_arranged_signals"
+        action: "establish_meeting_points"
+        description: "Establish physical meeting points and time-based signals before event"
+        difficulty: "easy"
+        effectiveness: "critical"
+      - id: "satellite_comms"
+        action: "consider_satellite"
+        description: "Consider satellite communicators (Garmin inReach) for emergencies"
+        difficulty: "hard"
+        effectiveness: "high"
+
+  - id: "deep_packet_inspection"
+    name: "Deep Packet Inspection (DPI)"
+    severity: "high"
+    description: "ISP-level inspection of encrypted traffic patterns; can identify VPN/Tor usage"
+    sources:
+      - title: "DPI and Censorship"
+        url: "https://www.eff.org/deeplinks/2019/09/how-government-uses-location-data"
+        author: "EFF"
+        date: "2019-09-01"
+    mitigations:
+      - id: "obfs4_bridges"
+        action: "use_tor_bridges"
+        description: "Use Tor with obfs4 bridges to disguise traffic as normal HTTPS"
+        difficulty: "medium"
+        effectiveness: "high"
+        resource: "https://bridges.torproject.org/"
+      - id: "domain_fronting"
+        action: "use_domain_fronting"
+        description: "Use tools that support domain fronting (Signal, some VPNs)"
+        difficulty: "medium"
+        effectiveness: "high"
+      - id: "steganography"
+        action: "consider_steganography"
+        description: "For extreme scenarios, hide data in images using steganography tools"
+        difficulty: "hard"
+        effectiveness: "medium"
+
+  - id: "cell_tower_monitoring"
+    name: "Cell Tower Monitoring & IMSI Catchers"
+    severity: "high"
+    description: "Stingray devices and cell tower data used to track all phones in an area"
+    sources:
+      - title: "Stingray Tracking Devices"
+        url: "https://www.eff.org/pages/cell-site-simulatorsimsi-catchers"
+        author: "EFF"
+        date: "2025-03-01"
+    mitigations:
+      - id: "airplane_mode"
+        action: "enable_airplane_mode"
+        description: "Enable airplane mode to prevent cell tower connections entirely"
+        difficulty: "trivial"
+        effectiveness: "critical"
+      - id: "faraday_bag"
+        action: "use_faraday_bag"
+        description: "Place phone in Faraday bag to block all signals"
+        difficulty: "easy"
+        effectiveness: "critical"
+        resource: "https://mosequipment.com/"
+      - id: "no_phone"
+        action: "leave_phone_home"
+        description: "Leave phone at home entirely; bring only cash and physical ID"
+        difficulty: "easy"
+        effectiveness: "critical"
+
+  - id: "wifi_tracking"
+    name: "WiFi Probe Tracking"
+    severity: "medium"
+    description: "Devices constantly probe for known WiFi networks, revealing location and device identity"
+    sources:
+      - title: "WiFi Tracking Explained"
+        url: "https://www.eff.org/deeplinks/2014/06/open-wireless-movement"
+        author: "EFF"
+        date: "2014-06-01"
+    mitigations:
+      - id: "disable_wifi"
+        action: "turn_off_wifi"
+        description: "Turn off WiFi completely before leaving home"
+        difficulty: "trivial"
+        effectiveness: "high"
+      - id: "forget_networks"
+        action: "forget_saved_networks"
+        description: "Remove saved WiFi networks from device to prevent probing"
+        difficulty: "easy"
+        effectiveness: "medium"
+      - id: "mac_randomization"
+        action: "enable_mac_randomization"
+        description: "Enable MAC address randomization in device settings"
+        difficulty: "easy"
+        effectiveness: "medium"
+        os: ["android", "ios"]
+
+  - id: "bluetooth_tracking"
+    name: "Bluetooth Device Tracking"
+    severity: "medium"
+    description: "Bluetooth beacons and scanners can track device presence and movement"
+    sources:
+      - title: "Bluetooth Tracking"
+        url: "https://www.eff.org/deeplinks/2019/01/bluetooth-tracking"
+        author: "EFF"
+        date: "2019-01-15"
+    mitigations:
+      - id: "disable_bluetooth"
+        action: "turn_off_bluetooth"
+        description: "Disable Bluetooth entirely before event"
+        difficulty: "trivial"
+        effectiveness: "high"
+      - id: "remove_paired_devices"
+        action: "unpair_devices"
+        description: "Remove paired Bluetooth devices that might auto-reconnect"
+        difficulty: "easy"
+        effectiveness: "medium"
+
+  - id: "encrypted_comms_detection"
+    name: "Encrypted Communications Detection"
+    severity: "medium"
+    description: "Authorities may flag users of encrypted apps like Signal for additional scrutiny"
+    sources:
+      - title: "Signal and Law Enforcement"
+        url: "https://signal.org/bigbrother/cd-california-702/"
+        author: "Signal"
+        date: "2021-10-01"
+    mitigations:
+      - id: "widespread_adoption"
+        action: "encourage_signal_adoption"
+        description: "Encourage widespread Signal adoption; safety in numbers"
+        difficulty: "medium"
+        effectiveness: "high"
+      - id: "disappearing_messages"
+        action: "enable_disappearing_messages"
+        description: "Enable disappearing messages with short timer (1 hour or less)"
+        difficulty: "trivial"
+        effectiveness: "high"
+      - id: "sealed_sender"
+        action: "use_sealed_sender"
+        description: "Signal's sealed sender hides who is messaging whom"
+        difficulty: "trivial"
+        effectiveness: "high"
+
+countermeasures:
+  browser_profile:
+    name: "Tor Browser Configuration"
+    description: "Use Tor Browser for all coordination; configure for maximum security"
+    settings:
+      - "security.level=safest"
+      - "javascript.enabled=false"
+      - "media.peerconnection.enabled=false"
+    extensions:
+      - name: "NoScript (built-in)"
+        description: "Already included in Tor Browser; blocks JavaScript"
+        url: "https://www.torproject.org"
+    notes: "Use Security Level: Safest for sensitive communications; some sites will break"
+
+  os_hardening_linux:
+    name: "Tails OS Recommended"
+    checks:
+      - check: "tails_running"
+        command: "grep Tails /etc/os-release"
+        expected: "Tails"
+        description: "Verify running Tails OS"
+      - check: "tor_running"
+        command: "systemctl status tor"
+        description: "Verify Tor service is active"
+    ufw_rules:
+      - "# Tails routes all traffic through Tor automatically"
+      - "# No additional firewall rules needed"
+    notes: "Tails is recommended for high-risk network scenarios; boots from USB, leaves no trace"
+
+  os_hardening_android:
+    name: "Android Network Hardening"
+    checks:
+      - check: "airplane_mode"
+        command: "adb shell settings get global airplane_mode_on"
+        expected: "1"
+        description: "Verify airplane mode is enabled"
+    actions:
+      - "Enable airplane mode before leaving home"
+      - "Install Briar for offline mesh messaging"
+      - "Install Organic Maps with offline maps downloaded"
+      - "Disable WiFi, Bluetooth, NFC, and mobile data"
+      - "Remove SIM card if possible"
+      - "Use Faraday bag when not actively using device"
+    notes: "Consider leaving phone home; if bringing, keep in airplane mode with Faraday bag"
+
+  network_config:
+    name: "Mesh & Offline Communications"
+    tor_setup:
+      - description: "Install Tor Browser before any network restrictions"
+        download: "https://www.torproject.org"
+        difficulty: "easy"
+        effectiveness: "high"
+      - description: "Request obfs4 bridges in advance"
+        download: "https://bridges.torproject.org/"
+        difficulty: "medium"
+        effectiveness: "high"
+    circumvention:
+      - name: "Briar"
+        description: "P2P encrypted messenger; works over WiFi, Bluetooth, Tor"
+        url: "https://briarproject.org/"
+      - name: "Bridgefy"
+        description: "Mesh messaging app; works without internet"
+        url: "https://bridgefy.me/"
+      - name: "Meshtastic"
+        description: "Open-source mesh networking on LoRa radios"
+        url: "https://meshtastic.org/"
+      - name: "Rumble"
+        description: "Delay-tolerant mesh networking for Android"
+        url: "https://github.com/nicholasclKUL/Rumble"
+    notes: "Install and TEST mesh apps before you need them; pair with trusted contacts in advance"
+
+legal_notes: |
+  - Internet shutdowns may indicate escalating government response; exercise extreme caution.
+  - Your communications may be monitored even if encrypted; metadata is still visible.
+  - Physical meeting points and time-based signals are more secure than any app.
+  - If arrested, do NOT unlock device; invoke right to silence and request lawyer.
+  - Document any network interference for later legal/journalistic purposes.
+
+sources:
+  - "https://www.accessnow.org/"
+  - "https://www.eff.org/"
+  - "https://ssd.eff.org/"
+  - "https://briarproject.org/"
+
+tags: ["us", "2026", "network", "mesh", "offline", "shutdown", "surveillance"]

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976D2"/>
+      <stop offset="100%" style="stop-color:#0D47A1"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield shape -->
+  <path d="M64 8 L112 24 L112 56 C112 88 88 112 64 120 C40 112 16 88 16 56 L16 24 Z" 
+        fill="url(#shieldGrad)" 
+        stroke="#0D47A1" 
+        stroke-width="2"/>
+  
+  <!-- Lock body -->
+  <rect x="44" y="58" width="40" height="32" rx="4" fill="#FFFFFF"/>
+  
+  <!-- Lock shackle -->
+  <path d="M52 58 L52 46 C52 38 56 32 64 32 C72 32 76 38 76 46 L76 58" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="6"
+        stroke-linecap="round"/>
+  
+  <!-- Keyhole -->
+  <circle cx="64" cy="70" r="6" fill="#1976D2"/>
+  <rect x="61" y="70" width="6" height="12" fill="#1976D2"/>
+  
+  <!-- Raised fist silhouette (simplified) -->
+  <g transform="translate(64, 100) scale(0.3)">
+    <path d="M-20 0 L-15 -30 L-5 -35 L0 -40 L5 -35 L15 -30 L20 0 Z" 
+          fill="#FFFFFF" 
+          opacity="0.3"/>
+  </g>
+</svg>

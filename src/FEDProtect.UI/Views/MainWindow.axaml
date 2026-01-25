@@ -1,0 +1,267 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FEDProtect.UI.ViewModels"
+        xmlns:views="using:FEDProtect.UI.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="FEDProtect.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="FEDProtect - Protect Protesters from Surveillance"
+        Width="1200" Height="800"
+        MinWidth="900" MinHeight="600">
+
+    <Window.Resources>
+        <views:SeverityColorConverter x:Key="SeverityColorConverter"/>
+        <views:PassFailConverter x:Key="PassFailConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+        
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" Spacing="15">
+                <TextBlock Text="FEDProtect" FontSize="28" FontWeight="Bold" />
+                <Border Background="#1976D2" CornerRadius="4" Padding="8,4" VerticalAlignment="Center">
+                    <TextBlock Text="v0.1.0" FontSize="12" Foreground="White"/>
+                </Border>
+            </StackPanel>
+            <TextBlock Text="Translate surveillance threats into device hardening" 
+                       FontSize="14" Opacity="0.7" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="280,*">
+            
+            <!-- Left Panel - Profile Selection -->
+            <Border Grid.Column="0" BorderBrush="#333" BorderThickness="1" 
+                    CornerRadius="8" Padding="15" Margin="0,0,10,0">
+                <Grid RowDefinitions="Auto,*,Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="Threat Profiles" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <ListBox Grid.Row="1" ItemsSource="{Binding AvailableProfiles}"
+                             SelectedItem="{Binding SelectedProfile}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Padding="8,6"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Profile Metadata -->
+                    <StackPanel Grid.Row="2" Margin="0,10,0,0" IsVisible="{Binding ProfileVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock Text="{Binding ProfileDescription}" TextWrapping="Wrap" 
+                                   FontSize="12" Opacity="0.8" MaxHeight="60"/>
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0">
+                            <TextBlock Text="{Binding ProfileVersion}" FontSize="11" Opacity="0.6"/>
+                            <TextBlock Text="{Binding ProfileLastUpdated}" FontSize="11" Opacity="0.6"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ProfileTags}" FontSize="10" Opacity="0.5" 
+                                   Margin="0,3,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <Button Grid.Row="3" Content="Refresh Profiles" 
+                            Command="{Binding LoadProfilesCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,10,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- Right Panel - Profile Details and Actions -->
+            <Border Grid.Column="1" BorderBrush="#333" BorderThickness="1" 
+                    CornerRadius="8" Padding="15" Margin="10,0,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    
+                    <!-- Action Buttons -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,15">
+                        <Button Content="Generate Checklist" 
+                                Command="{Binding GenerateChecklistCommand}"
+                                IsEnabled="{Binding !IsLoading}"
+                                Classes="accent"/>
+                        <Button Content="Create Firefox Profile" 
+                                Command="{Binding CreateBrowserProfileCommand}"
+                                IsEnabled="{Binding !IsLoading}"/>
+                        <Button Content="Run Security Checks" 
+                                Command="{Binding RunSecurityChecksCommand}"
+                                IsEnabled="{Binding !IsLoading}"/>
+                    </StackPanel>
+
+                    <!-- Tabs for different views -->
+                    <TabControl Grid.Row="1">
+                        
+                        <!-- Threats Tab -->
+                        <TabItem Header="Threats">
+                            <Grid ColumnDefinitions="*,*">
+                                <!-- Threat List -->
+                                <ScrollViewer Grid.Column="0" Margin="0,0,5,0">
+                                    <ListBox ItemsSource="{Binding Capabilities}"
+                                             SelectedItem="{Binding SelectedCapability}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Padding="10" Margin="0,0,0,5">
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <TextBlock Text="{Binding Name}" 
+                                                                       FontSize="14" FontWeight="Bold"/>
+                                                            <Border Background="{Binding Severity, Converter={StaticResource SeverityColorConverter}}"
+                                                                    CornerRadius="4" Padding="6,2">
+                                                                <TextBlock Text="{Binding Severity}" 
+                                                                           FontSize="10" 
+                                                                           Foreground="White"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        
+                                                        <TextBlock Text="{Binding Description}" 
+                                                                   TextWrapping="Wrap" 
+                                                                   Margin="0,5,0,0"
+                                                                   Opacity="0.7"
+                                                                   FontSize="12"
+                                                                   MaxHeight="40"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </ScrollViewer>
+                                
+                                <!-- Mitigations Detail -->
+                                <Border Grid.Column="1" BorderBrush="#333" BorderThickness="1,0,0,0" 
+                                        Padding="15,0,0,0" Margin="5,0,0,0">
+                                    <ScrollViewer>
+                                        <StackPanel>
+                                            <TextBlock Text="Mitigations" FontSize="16" FontWeight="Bold" 
+                                                       Margin="0,0,0,10"/>
+                                            <TextBlock Text="Select a threat to view mitigations" 
+                                                       Opacity="0.5"
+                                                       IsVisible="{Binding !SelectedCapability, FallbackValue=True}"/>
+                                            <ItemsControl ItemsSource="{Binding Mitigations}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderBrush="#444" BorderThickness="0,0,0,1" 
+                                                                Padding="0,10" Margin="0,0,0,5">
+                                                            <StackPanel>
+                                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                    <TextBlock Text="{Binding Action}" 
+                                                                               FontWeight="Bold" FontSize="13"/>
+                                                                    <Border Background="#4CAF50" CornerRadius="3" 
+                                                                            Padding="4,1">
+                                                                        <TextBlock Text="{Binding Effectiveness}" 
+                                                                                   FontSize="9" Foreground="White"/>
+                                                                    </Border>
+                                                                    <Border Background="#2196F3" CornerRadius="3" 
+                                                                            Padding="4,1">
+                                                                        <TextBlock Text="{Binding Difficulty}" 
+                                                                                   FontSize="9" Foreground="White"/>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                                <TextBlock Text="{Binding Description}" 
+                                                                           TextWrapping="Wrap" 
+                                                                           Margin="0,5,0,0"
+                                                                           Opacity="0.8"
+                                                                           FontSize="12"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Security Checks Tab -->
+                        <TabItem Header="Security Checks">
+                            <ScrollViewer>
+                                <StackPanel>
+                                    <TextBlock Text="Run security checks to verify your system configuration" 
+                                               Opacity="0.7" Margin="0,0,0,15"/>
+                                    <ItemsControl ItemsSource="{Binding SecurityCheckResults}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="#444" BorderThickness="0,0,0,1" 
+                                                        Padding="10" Margin="0,0,0,5">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                                        <Border Grid.Column="0" Width="8" Height="8" 
+                                                                CornerRadius="4" Margin="0,0,10,0"
+                                                                VerticalAlignment="Center">
+                                                            <Border.Background>
+                                                                <SolidColorBrush Color="{Binding Passed, Converter={StaticResource PassFailConverter}}"/>
+                                                            </Border.Background>
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="{Binding CheckName}" 
+                                                                       FontWeight="Bold"/>
+                                                            <TextBlock Text="{Binding Message}" 
+                                                                       Opacity="0.7"
+                                                                       Margin="0,2,0,0"
+                                                                       FontSize="12"/>
+                                                        </StackPanel>
+                                                        <TextBlock Grid.Column="2" 
+                                                                   Text="{Binding Passed, Converter={StaticResource PassFailConverter}}"
+                                                                   FontSize="14" FontWeight="Bold"
+                                                                   VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <!-- About Tab -->
+                        <TabItem Header="About">
+                            <ScrollViewer>
+                                <StackPanel Margin="10">
+                                    <TextBlock Text="FEDProtect" FontSize="24" FontWeight="Bold"/>
+                                    <TextBlock Text="Protect protesters from surveillance" 
+                                               Opacity="0.7" Margin="0,5,0,20"/>
+                                    
+                                    <TextBlock Text="About" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <TextBlock TextWrapping="Wrap" Opacity="0.8">
+                                        FEDProtect translates real-time federal surveillance threats into 
+                                        automated device hardening. Community-maintained YAML threat profiles 
+                                        feed into actionable security configurations.
+                                    </TextBlock>
+                                    
+                                    <TextBlock Text="Resources" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock Text="- ACLU: https://www.aclu.org/" Opacity="0.8"/>
+                                    <TextBlock Text="- EFF: https://www.eff.org/" Opacity="0.8"/>
+                                    <TextBlock Text="- Tor Project: https://www.torproject.org/" Opacity="0.8"/>
+                                    <TextBlock Text="- Signal: https://signal.org/" Opacity="0.8"/>
+                                    
+                                    <TextBlock Text="License" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock Text="GPLv3 Open Source" Opacity="0.8"/>
+                                    
+                                    <TextBlock Text="Disclaimer" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock TextWrapping="Wrap" Opacity="0.8">
+                                        This tool does not guarantee protection. Threat landscape evolves constantly.
+                                        This is not legal advice. Consult with lawyers and security professionals.
+                                    </TextBlock>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#222" CornerRadius="4" 
+                Padding="10" Margin="0,20,0,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" 
+                           VerticalAlignment="Center"/>
+                <ProgressBar Grid.Column="1" 
+                             IsIndeterminate="True" 
+                             IsVisible="{Binding IsLoading}"
+                             Width="100" Height="4"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

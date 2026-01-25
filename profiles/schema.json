@@ -1,0 +1,267 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/seloc0des/protest-hardener/profiles/schema.json",
+  "title": "FEDProtect Threat Profile",
+  "description": "Schema for threat intelligence profiles used by FEDProtect",
+  "type": "object",
+  "required": ["name", "description", "version", "capabilities"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the threat profile"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the threat scenario"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Semantic version of the profile"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the profile was last updated (YYYY-MM-DD)"
+    },
+    "regions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Geographic regions this profile applies to"
+    },
+    "contexts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Situational contexts (e.g., protests, ice_raids)"
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/capability" },
+      "description": "List of surveillance capabilities/threats"
+    },
+    "countermeasures": {
+      "$ref": "#/definitions/countermeasures",
+      "description": "Technical countermeasures and configurations"
+    },
+    "legal_notes": {
+      "type": "string",
+      "description": "Legal guidance and disclaimers"
+    },
+    "sources": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" },
+      "description": "List of source URLs for the profile"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags for categorization and search"
+    }
+  },
+  "definitions": {
+    "capability": {
+      "type": "object",
+      "required": ["id", "name", "severity", "description", "mitigations"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z_]+$",
+          "description": "Unique identifier (snake_case)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the threat"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Severity level of the threat"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the threat"
+        },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/source" },
+          "description": "Cited sources for this threat"
+        },
+        "mitigations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/mitigation" },
+          "description": "Actions to mitigate this threat"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["title", "url", "author", "date"],
+      "properties": {
+        "title": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "author": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      }
+    },
+    "mitigation": {
+      "type": "object",
+      "required": ["id", "action", "description", "difficulty", "effectiveness"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z_]+$",
+          "description": "Unique identifier (snake_case)"
+        },
+        "action": {
+          "type": "string",
+          "description": "Short action name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the mitigation"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["trivial", "easy", "medium", "hard"],
+          "description": "How difficult this is to implement"
+        },
+        "effectiveness": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "How effective this mitigation is"
+        },
+        "resource": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional link to more information"
+        },
+        "os": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["android", "ios", "linux", "windows", "macos"]
+          },
+          "description": "Operating systems this applies to"
+        }
+      }
+    },
+    "countermeasures": {
+      "type": "object",
+      "properties": {
+        "browser_profile": {
+          "$ref": "#/definitions/browser_profile"
+        },
+        "os_hardening_linux": {
+          "$ref": "#/definitions/os_hardening_linux"
+        },
+        "os_hardening_android": {
+          "$ref": "#/definitions/os_hardening_android"
+        },
+        "network_config": {
+          "$ref": "#/definitions/network_config"
+        }
+      }
+    },
+    "browser_profile": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "settings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "os_hardening_linux": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "check": { "type": "string" },
+              "command": { "type": "string" },
+              "expected": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "ufw_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "os_hardening_android": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "check": { "type": "string" },
+              "command": { "type": "string" },
+              "expected": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "network_config": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "tor_setup": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "download": { "type": "string", "format": "uri" },
+              "difficulty": { "type": "string" },
+              "effectiveness": { "type": "string" }
+            }
+          }
+        },
+        "circumvention": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}
